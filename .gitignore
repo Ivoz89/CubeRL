@@ -8,6 +8,7 @@ tags
 .*.swp
 .*.swo
 build
+target
 .classpath
 .project
 .settings
