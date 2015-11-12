@@ -1,9 +1,11 @@
-package logic
+package control.time.processing
 
+import control.time.TurnProcessor
 import model._
-import model.functor.{FieldMonad, CreatureMonad, RoomMonad}
+import model.functor.{CreatureMonad, FieldMonad, RoomMonad}
 
 /**
+ * Applies all CreatureEffects posessed by the Creatures in a Room
  * Created by iozi on 05/11/2015.
  */
 class CreatureEffectProcessor extends TurnProcessor {
@@ -13,7 +15,7 @@ class CreatureEffectProcessor extends TurnProcessor {
   override def processNextTurn() = (room : Room) => {
     RoomMonad(room).to((room : Room) => {
       val fields = room.fields.map(_.map( (f : Field) => f match  {
-        case f if f.visitor.isDefined => FieldMonad(f).to( (f : Field) => FieldMonad(f).changeVisitor(processCreatureEffects).get).get
+        case f if f.visitor.isDefined => FieldMonad(f).modifyVisitor(processCreatureEffects).get
         case _ => f
       }))
       Room(fields)

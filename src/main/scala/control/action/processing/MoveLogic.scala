@@ -1,6 +1,6 @@
-package logic
+package control.action.processing
 
-import control.action.MovementAction
+import control.action.{ActionLogicLink, MovementAction}
 import control.{CreatureDecision, Direction}
 import model.FieldType._
 import model.functor.RoomMonad

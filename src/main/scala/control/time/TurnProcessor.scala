@@ -1,4 +1,4 @@
-package logic
+package control.time
 
 import model.Room
 

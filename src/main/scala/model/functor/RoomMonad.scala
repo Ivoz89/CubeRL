@@ -1,6 +1,6 @@
 package model.functor
 
-import model.{Field, Room}
+import model._
 
 /**
  * Created by iozi on 04/11/2015.
@@ -21,7 +21,9 @@ class RoomMonad(value : Room) {
 
   def getField[A] (coords : (Int,Int)) = FieldMonad(value.fields(coords._1)(coords._2))
 
-  def filterFields(predicate: Field => Boolean) = value.fields.flatMap(_).filter(predicate)
+  def filterFields(predicate: Field => Boolean) : Vector[Field] = value.fields.flatMap(f => f).filter(predicate)
+  
+  def getInhabitants : Vector[Creature] = filterFields(_.visitor isDefined).map(_.visitor.get)
 
   def get = value
 }

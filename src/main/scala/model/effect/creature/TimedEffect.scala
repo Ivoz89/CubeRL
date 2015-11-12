@@ -3,36 +3,26 @@ package model.effect.creature
 import model.CharAttribute.CharAttribute
 import model.Creature
 import model.functor.CreatureMonad
-
-import scala.collection.immutable.::
+import util.Utils._
 
 /**
  * Created by iozi on 04/11/2015.
  */
 class TimedEffect(attribute : CharAttribute, delta : Int, duration : Int) extends CreatureEffect{
 
-  override def affect() = (creature : Creature) => {
-    checkExpiration(CreatureMonad(creature).modifyStat(attribute,delta))
-
-    }
+  override def affect() = (creature : Creature) =>
+    checkExpiration(CreatureMonad(creature).modifyStat(attribute,delta)).get
 
   def checkExpiration(monad : CreatureMonad) = {
-    if (duration==0)
-      monad.modifyEffects(dropOne(this))
+    if (duration==1)
+      monad.modifyEffects(updateElement(this,(elem, list) => list))
     else
-      monad.modifyEffects(dropOne(this))
+      monad.modifyEffects(updateElement(TimedEffect(attribute,delta,duration-1),_ :: _))
   }
+}
 
-  def dropOne[A](elem :A)(ls : List[A]) : List[A] = ls match {
-    case head :: tail if head == elem => tail
-    case head :: tail => head :: dropOne(tail,elem)
-    case _ => _
+object TimedEffect {
+  def apply(attribute : CharAttribute, delta : Int, duration : Int) = {
+    new TimedEffect(attribute,delta,duration)
   }
-
-  def replaceOne[A](elem :A)(ls : List[A]) : List[A] = ls match {
-    case head :: tail if head == elem => elem :: tail
-    case head :: tail => head :: replaceOne(tail,elem)
-    case _ => _
-  }
-
 }

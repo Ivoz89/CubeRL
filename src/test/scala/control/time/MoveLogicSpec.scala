@@ -1,11 +1,12 @@
-package logic
+package control.time
 
 import control._
 import control.action.MovementAction
+import control.action.processing.MoveLogic
 import model._
 import model.functor.RoomMonad
 import org.scalatest._
-import util.{Visualizer, RoomFactory}
+import util.{CreatureBuilder, Visualizer, RoomFactory}
 
 /**
  * Created by iozi on 04/11/2015.
@@ -22,11 +23,11 @@ class MoveLogicSpec extends FlatSpec with Matchers with BeforeAndAfter {
     initialX = 5;
     initialY = 5;
     moveLogic = new MoveLogic
-    fields = RoomFactory.getRoom(10, 10, initialY, initialX)
+    fields = RoomFactory.getRoom(10, 10, initialY, initialX,CreatureBuilder().get)
     creature = fields.flatMap(v => v.map(e => e.visitor)).flatten.head
   }
 
-  "Move logic" should "move a creature from one field to another" in {
+  "Move control.logic" should "move a creature from one field to another" in {
     moveLogic.processDecision(new CreatureDecision(creature, new MovementAction(NORTH)))(Room(fields))
   }
 
@@ -50,7 +51,7 @@ class MoveLogicSpec extends FlatSpec with Matchers with BeforeAndAfter {
   it should "stop creature from moving into a wall" in {
     val initialX = 1;
     val initialY = 1;
-    fields = RoomFactory.getRoom(10, 10, initialY, initialX)
+    fields = RoomFactory.getRoom(10, 10, initialY, initialX,CreatureBuilder().get)
     creature = fields.flatMap(v => v.map(e => e.visitor)).flatten.head
     List(NORTH, WEST, NORTHWEST, NORTHEAST).foreach(dir => {
       val result = RoomMonad(Room(fields)).to(moveLogic.processDecision(new CreatureDecision(creature, new MovementAction(dir)))).
